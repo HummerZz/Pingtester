@@ -1,71 +1,188 @@
-# Ping Checker
+# 24/7 Network Monitor
 
-A very simple local web app that lets you enter an IP address or hostname, run a ping test, and view the result in the browser.
+A simple local monitoring app that runs 24/7, pings a list of IP addresses every 15 minutes, and stores the results in a SQLite database.
 
 ## What it does
 
-- You enter a host, for example `8.8.8.8`
-- The app runs a ping test
-- It shows:
-  - packet loss
-  - average latency
-  - raw ping output
+- Reads IP addresses from `ips.txt`
+- Pings each IP **20 times**
+- Repeats the checks every **15 minutes**
+- Saves the results in `network_monitor.db`
+- Shows the latest status in a browser
+- Shows history for each IP
 
-## Requirements
+## Files
 
-- Python 3 installed
-- Internet/network access
-- Windows, Linux, or macOS
+You should have these files in the same folder:
 
-## Install
+```text
+network_monitor.py
+ips.txt
 
-Open terminal in the same folder as `app.py` and run:
+After the program starts, it will also create:
 
-```bash
-pip install fastapi uvicorn python-multipart
-Start the app
+network_monitor.db
+Requirements
+
+Python 3 installed
+
+Windows, Linux, or macOS
+
+Network access to the IP addresses you want to monitor
+
+Install
+
+Open a terminal in the same folder as network_monitor.py and run:
+
+pip install fastapi uvicorn
+Configure the IP list
+
+Edit ips.txt and put one IP address per line.
+
+Example:
+
+10.10.2.1
+10.10.3.1
+10.10.3.5
+10.10.3.4
+8.8.8.8
+1.1.1.1
+
+Notes:
+
+Empty lines are ignored
+
+Lines starting with # are ignored
+
+Duplicate IPs are automatically removed
+
+Example with comments:
+
+# Gateway
+10.10.2.1
+
+# Internal DNS
+10.10.3.1
+10.10.3.5
+10.10.3.4
+
+# External test targets
+8.8.8.8
+1.1.1.1
+Start the program
 
 Run:
 
-python app.py
+python network_monitor.py
 Open in browser
 
 Go to:
 
 http://127.0.0.1:8000
-How to use
+How it works
 
-Open the page in your browser
+The app starts a background monitoring loop when it launches.
 
-Enter an IP address or hostname, for example:
+For each cycle it will:
 
-8.8.8.8
+Read all IP addresses from ips.txt
 
-google.com
+Ping each IP 20 times
 
-Click Run Test
+Save the result
 
-Read the result on the next page
+Wait 15 minutes
 
-What the result means
+Repeat
 
-Host = the address you tested
+What you see on the dashboard
 
-Packet loss = how many packets were lost
+The main page shows the latest result for each IP.
 
-Average latency = average response time
+You will see:
 
-Raw ping output = the full ping result from your system
+Status
 
-Example
+IP
 
-If you test:
+Packet Loss
 
-8.8.8.8
+Average Latency
 
-the app will ping it 4 times and show the result in the browser.
+Probable Cause
 
-Stop the app
+Checked At
+
+History link
+
+Status meanings
+
+OK = no packet loss
+
+Unstable = some packet loss
+
+Down = 100% packet loss
+
+No data = no saved result yet
+
+History page
+
+Click History next to an IP to view:
+
+previous saved checks
+
+packet loss over time
+
+average latency over time
+
+latest raw ping output
+
+Health check
+
+You can also open:
+
+http://127.0.0.1:8000/health
+
+If the app is running, it returns:
+
+ok
+Changing the IP list
+
+To add or remove monitored IPs:
+
+Open ips.txt
+
+Edit the list
+
+Save the file
+
+The program reads the file again on the next monitoring cycle.
+
+Important notes
+
+This app is designed to run continuously
+
+It stores data locally in SQLite
+
+It does not need a separate database server
+
+It uses the system ping command
+
+The first dashboard may show no results until the first checks have finished
+
+Example workflow
+
+Add IPs to ips.txt
+
+Start the app
+
+Open http://127.0.0.1:8000
+
+Wait for the first monitoring cycle to finish
+
+View the latest status and open history for details
+
+Stop the program
 
 Press:
 
